@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microstrip Line Calculator</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script>
+function calculateMicrostripAntenna() {
+    var c = 299792458; // Speed of light in vacuum in m/s
+
+    var frequency = parseFloat(document.getElementById('frequency').value) * Math.pow(10, 9); // Convert GHz to Hz
+    var epsilon_r = parseFloat(document.getElementById('epsilon_r').value);
+    var height = parseFloat(document.getElementById('height').value) / 1000; // Convert mm to m
+    var Zo = parseFloat(document.getElementById('zo').value);
+    var elecLengthDeg = parseFloat(document.getElementById('elecLength').value);
+
+    var A = (Zo / 60) * Math.sqrt((epsilon_r + 1) / 2) + ((epsilon_r - 1) / (epsilon_r + 1)) * (0.23 + 0.11 / epsilon_r);
+    var W = (8 * height * Math.exp(A)) / (Math.exp(2 * A) - 2); // Approximation for W based on Zo
+    var epsilon_eff = (epsilon_r + 1) / 2 + (epsilon_r - 1) / 2 * (1 / Math.sqrt(1 + 12 * (height / W)));
+    var L = (c / (frequency * Math.sqrt(epsilon_eff))) * (elecLengthDeg / 360); // Approximation for L based on electrical length
+
+    document.getElementById('results').innerHTML = 
+        'Width (W) = ' + (W * 1000).toFixed(6) + ' mm<br>' + 
+        'Length (L) = ' + (L * 1000).toFixed(6) + ' mm<br>';
+}
+
+</script>
+</head>
+<body>
+
+<div class="container mt-5">
+
+	<h2>Microstrip Line Calculator</h2>
+
+	<table class="table table-bordered">
+      <thead>
+          <tr>
+              <th>Key</th>
+              <th>Value</th>
+          </tr>
+      </thead>
+      <tbody>
+
+      	<tr>
+          <td>Resonant Frequency</td>
+          <td>
+              <input type="number" id="frequency" step="any" placeholder="GHz">
+              <label for="frequency">GHz</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Relative Dielectric Constant</td>
+          <td>
+              <input type="number" id="epsilon_r" step="any" placeholder="ε_r">
+              <label for="epsilon_r">ε_r</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Substrate Height</td>
+          <td>
+              <input type="number" id="height" step="any" placeholder="(h) in mm">
+              <label for="height">mm</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Characteristic Impedance</td>
+          <td>
+              <input type="number" id="zo" step="any" placeholder="(Zo) in Ω">
+               <label for="zo">Ω</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Electrical Length</td>
+          <td>
+              <input type="number" id="elecLength" step="any" placeholder="deg">
+              <label for="elecLength">deg</label>
+          </td>
+        </tr>
+
+        <tr>
+          <td>
+          	<button onclick="calculateMicrostripAntenna()">Calculate</button>
+          </td>
+          <td>
+              <div id="results"></div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+</div>
+</body>
+</html>
